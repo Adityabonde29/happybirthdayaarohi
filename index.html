@@ -1606,37 +1606,37 @@
 
     const movies = [
       {
-        img: "../images/11.jpeg", title: "Est. 2021", match: "100% Match", meta: ["Origin Story",
+        img: "./images/11.jpeg", title: "Est. 2021", match: "100% Match", meta: ["Origin Story",
           "Ongoing"
         ], desc: "The one where two strangers become the kind of friends who just get it, instantly, and never look back.",
         badge: "ORIGIN"
       },
       {
-        img: "../images/12.jpeg", title: "Always On Call", match: "99% Match", meta: ["Drama",
+        img: "./images/12.jpeg", title: "Always On Call", match: "99% Match", meta: ["Drama",
           "Every Timezone"
         ], desc: "No matter the hour, the mood, or the mess — one ring and she's there. Every single time, no exceptions.",
         badge: "FAN FAV"
       },
       {
-        img: "../images/13.jpeg", title: "3AM: The Series", match: "97% Match", meta: ["Comedy",
+        img: "./images/13.jpeg", title: "3AM: The Series", match: "97% Match", meta: ["Comedy",
           "Never Cancelled"
         ], desc: "Late-night calls, terrible ideas, worse jokes. The longest-running show that somehow never gets old.",
         badge: "LONG RUN"
       },
       {
-        img: "../images/14.jpeg", title: "Unfiltered & Unbothered", match: "98% Match", meta: ["Comedy",
+        img: "./images/14.jpeg", title: "Unfiltered & Unbothered", match: "98% Match", meta: ["Comedy",
           "No Script"
         ], desc: "No filters, no script, no self-consciousness — just two people being ridiculous on camera and loving it.",
         badge: "RAW CUT"
       },
       {
-        img: "../images/15.jpeg", title: "The Constant", match: "100% Match", meta: ["Drama",
+        img: "./images/15.jpeg", title: "The Constant", match: "100% Match", meta: ["Drama",
           "Since 2021"
         ], desc: "Seasons change, life gets loud, plans fall apart — she's the one character who never, ever leaves the plot.",
         badge: "ESSENTIAL"
       },
       {
-        img: "../images/16.jpeg", title: "Chaos, Co-Starring You", match: "96% Match", meta: ["Slice of Life",
+        img: "./images/16.jpeg", title: "Chaos, Co-Starring You", match: "96% Match", meta: ["Slice of Life",
           "Ongoing"
         ], desc: "Every random adventure, every dumb plan, every 'let's just do it' — she's in the frame for all of it.",
         badge: "NEW"
@@ -1644,10 +1644,10 @@
     ];
 
     const kidPhotos = [
-      { src: "../images/17.jpeg", caption: "Exhibit A: pure chaos energy" },
-      { src: "../images/18.jpeg", caption: "Before she learned to pose" },
-      { src: "../images/19.jpeg", caption: "The original main character" },
-      { src: "../images/20.jpeg", caption: "Still iconic" }
+      { src: "./images/17.jpeg", caption: "Exhibit A: pure chaos energy" },
+      { src: "./images/18.jpeg", caption: "Before she learned to pose" },
+      { src: "./images/19.jpeg", caption: "The original main character" },
+      { src: "./images/20.jpeg", caption: "Still iconic" }
     ];
 
     const birthdayMessage = [
@@ -1667,7 +1667,7 @@
       <div class="profiles-row">
         <button class="profile-card" onclick="goTo('screen-password')">
           <div class="profile-avatar">
-            <div class="ph"><img src="../images/11.jpeg" onerror="this.style.display='none'"
+            <div class="ph"><img src="./images/11.jpeg" onerror="this.style.display='none'"
                 onload="this.parentElement.classList.add('loaded')"><span
                 class="ph-label"><b>AAROHI</b>profile-aarohi.jpg</span></div>
           </div>
@@ -1675,7 +1675,7 @@
         </button>
         <button class="profile-card" onclick="goTo('screen-kids')">
           <div class="profile-avatar kids">
-            <div class="ph"><img src="../images/17.jpeg" onerror="this.style.display='none'"
+            <div class="ph"><img src="./images/17.jpeg" onerror="this.style.display='none'"
                 onload="this.parentElement.classList.add('loaded')"><span
                 class="ph-label"><b>KIDS</b>profile-kids.jpg</span></div>
           </div>
@@ -1689,7 +1689,7 @@
   <div class="screen" id="screen-password">
     <div class="pw-box">
       <div class="pw-avatar">
-        <div class="ph"><img src="../images/11.jpeg" onerror="this.style.display='none'"
+        <div class="ph"><img src="./images/11.jpeg" onerror="this.style.display='none'"
             onload="this.parentElement.classList.add('loaded')"><span class="ph-label">AAROHI</span></div>
       </div>
       <h2>Enter your password</h2>
@@ -1714,7 +1714,7 @@
       <div class="topnav-right">
         <a class="exit-link" onclick="goTo('screen-profiles')">Switch Profile</a>
         <div class="nav-avatar">
-          <div class="ph"><img src="../images/11.jpeg" onerror="this.style.display='none'"
+          <div class="ph"><img src="./images/11.jpeg" onerror="this.style.display='none'"
               onload="this.parentElement.classList.add('loaded')"></div>
         </div>
       </div>
