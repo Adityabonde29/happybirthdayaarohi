@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AAROHIFLIX</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --surface: #1a1a1d;
+      --surface-2: #242428;
+      --red: #e50914;
+      --red-glow: #ff1a25;
+      --gold: #f2b134;
+      --gold-soft: #f5c85a;
+      --text: #ffffff;
+      --muted: #b0b0b0;
+      --muted-2: #6e6e6e;
+      --card-radius: 8px;
+      --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      width: 100%;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .display {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 1.5px;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ============ SCROLLBAR: HIDE HORIZONTAL, STYLE VERTICAL ============ */
+    /* Hide all horizontal scrollbars */
+    .row-track,
+    body,
+    .screen {
+      scrollbar-width: thin;
+      scrollbar-color: #333 transparent;
+    }
+
+    .row-track {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .row-track::-webkit-scrollbar {
+      display: none;
+      height: 0;
+      width: 0;
+    }
+
+    /* Subtle vertical scrollbar for the browse screen */
+    .screen {
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a2a transparent;
+    }
+
+    .screen::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .screen::-webkit-scrollbar-thumb {
+      background: #2a2a2a;
+      border-radius: 10px;
+    }
+
+    .screen::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .screen::-webkit-scrollbar-thumb:hover {
+      background: #3a3a3a;
+    }
+
+    /* ============ SCREEN SYSTEM ============ */
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 1;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    #screen-browse.active {
+      display: block;
+    }
+
+    /* ============ IMAGE FALLBACK ============ */
+    .ph {
+      position: relative;
+      background: linear-gradient(135deg, #1e1e22, #141418);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ph img {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    .ph .ph-label {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 10px;
+      font-size: 10px;
+      color: var(--muted-2);
+      line-height: 1.5;
+      pointer-events: none;
+    }
+
+    .ph .ph-label b {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .ph.loaded .ph-label {
+      display: none;
+    }
+
+    /* ============ LOGO ============ */
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      color: var(--red);
+      letter-spacing: 2.5px;
+      line-height: 1;
+      user-select: none;
+      transition: color var(--transition-fast);
+    }
+
+    .logo span {
+      color: var(--text);
+    }
+
+    .logo:hover {
+      color: var(--red-glow);
+    }
+
+    /* ============ PROFILE SELECT ============ */
+    #screen-profiles {
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 40% 30%, #1c1c22 0%, #0a0a0c 75%);
+    }
+
+    .profiles-wrap {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .profiles-wrap h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 400;
+      margin-bottom: 48px;
+      letter-spacing: 1px;
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .profiles-row {
+      display: flex;
+      gap: 36px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .profile-card {
+      background: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 160px;
+      animation: fadeInUp 0.6s ease both;
+      transition: transform var(--transition-smooth);
+    }
+
+    .profile-card:nth-child(1) {
+      animation-delay: 0.15s;
+    }
+
+    .profile-card:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .profile-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 3px solid transparent;
+      transition: border-color var(--transition-fast), transform var(--transition-smooth), box-shadow var(--transition-smooth);
+      background: linear-gradient(135deg, #3a3a3a, #161616);
+      position: relative;
+    }
+
+    .profile-card:hover .profile-avatar {
+      border-color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 16px 40px rgba(229, 9, 20, 0.25);
+    }
+
+    .profile-avatar.kids {
+      background: linear-gradient(135deg, #f2b134, #e5484d);
+    }
+
+    .profile-avatar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 9px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .profile-name {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 500;
+      transition: color var(--transition-fast);
+    }
+
+    .profile-card:hover .profile-name {
+      color: var(--text);
+    }
+
+    .kids-tag {
+      display: inline-block;
+      background: var(--gold);
+      color: #141414;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-top: 2px;
+    }
+
+    /* ============ PASSWORD SCREEN ============ */
+    #screen-password {
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 40% 30%, #1c1c22 0%, #0a0a0c 75%);
+    }
+
+    .pw-box {
+      width: 100%;
+      max-width: 400px;
+      padding: 40px 20px;
+      text-align: center;
+      animation: fadeInUp 0.5s ease both;
+    }
+
+    .pw-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
+      margin: 0 auto 24px;
+      overflow: hidden;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      transition: border-color var(--transition-fast);
+    }
+
+    .pw-avatar:focus-within {
+      border-color: var(--red);
+    }
+
+    .pw-box h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      font-weight: 400;
+      margin-bottom: 24px;
+    }
+
+    .pw-input {
+      width: 100%;
+      background: var(--surface-2);
+      border: 2px solid #3a3a3a;
+      color: var(--text);
+      padding: 14px 16px;
+      font-size: 15px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+      outline: none;
+    }
+
+    .pw-input:focus {
+      border-color: #fff;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+    }
+
+    .pw-submit {
+      width: 100%;
+      background: var(--red);
+      color: #fff;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 6px;
+      transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+      letter-spacing: 0.3px;
+    }
+
+    .pw-submit:hover {
+      background: #c00;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(229, 9, 20, 0.35);
+    }
+
+    .pw-submit:active {
+      transform: scale(0.97);
+    }
+
+    .pw-error {
+      color: #ff4d4d;
+      font-size: 13px;
+      margin-top: 12px;
+      min-height: 18px;
+      font-weight: 500;
+    }
+
+    .pw-back {
+      display: inline-block;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      border-bottom: 1px solid transparent;
+      cursor: pointer;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .pw-back:hover {
+      color: var(--text);
+      border-color: var(--text);
+    }
+
+    /* ============ TOP NAV ============ */
+    .topnav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      background: transparent;
+      transition: background 0.35s ease, backdrop-filter 0.35s ease;
+      pointer-events: none;
+    }
+
+    .topnav>* {
+      pointer-events: auto;
+    }
+
+    .topnav.scrolled {
+      background: rgba(10, 10, 12, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .topnav-left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .topnav-links {
+      display: flex;
+      gap: 20px;
+      font-size: 13.5px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .topnav-links a {
+      transition: color var(--transition-fast);
+      position: relative;
+    }
+
+    .topnav-links a:hover {
+      color: var(--text);
+    }
+
+    .topnav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--red);
+      transition: width var(--transition-smooth);
+      border-radius: 2px;
+    }
+
+    .topnav-links a:hover::after {
+      width: 100%;
+    }
+
+    .topnav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .nav-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      transition: border-color var(--transition-fast);
+    }
+
+    .nav-avatar:hover {
+      border-color: #fff;
+    }
+
+    .exit-link {
+      font-size: 12.5px;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 500;
+      transition: color var(--transition-fast);
+    }
+
+    .exit-link:hover {
+      color: var(--text);
+    }
+
+    /* ============ HERO ============ */
+    .hero {
+      position: relative;
+      width: 100%;
+      background: linear-gradient(135deg, #1a0505 0%, #0d0d12 30%, #0a0a0c 60%, #0d0d12 100%);
+      background-size: 400% 400%;
+      animation: heroShimmer 18s ease infinite;
+      padding: 130px 40px 60px;
+      overflow: hidden;
+    }
+
+    @keyframes heroShimmer {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      25% {
+        background-position: 100% 0%;
+      }
+
+      50% {
+        background-position: 100% 100%;
+      }
+
+      75% {
+        background-position: 0% 100%;
+      }
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 20% 35%, rgba(229, 9, 20, 0.13), transparent 55%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 75% 60%, rgba(242, 177, 52, 0.06), transparent 50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 44px;
+      flex-wrap: wrap;
+    }
+
+    .hero-content {
+      flex: 1 1 380px;
+      max-width: 540px;
+      min-width: 0;
+      animation: fadeInUp 0.7s ease both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-eyebrow {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 6.5vw, 76px);
+      line-height: 0.9;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
+    .hero-desc {
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 26px;
+      opacity: 0.88;
+      font-weight: 400;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 6px;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-play {
+      background: #fff;
+      color: #000;
+    }
+
+    .btn-play:hover {
+      background: rgba(255, 255, 255, 0.85);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-info {
+      background: rgba(130, 130, 140, 0.35);
+      color: #fff;
+      backdrop-filter: blur(6px);
+    }
+
+    .btn-info:hover {
+      background: rgba(130, 130, 140, 0.55);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ============ HIGHLIGHT REEL IN HERO ============ */
+    .hero-highlight {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      animation: fadeInUp 0.7s ease 0.2s both;
+    }
+
+    .hero-highlight-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .highlight-feature {
+      width: min(230px, 46vw);
+      aspect-ratio: 9/16;
+      max-height: 390px;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      background: #111;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+      transition: box-shadow var(--transition-smooth);
+    }
+
+    .highlight-feature:hover {
+      box-shadow: 0 28px 70px rgba(229, 9, 20, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.15);
+    }
+
+    .hl-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+      transform: scale(1.04);
+    }
+
+    .hl-slide.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .hl-slide-overlay {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 16px 14px 18px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+      z-index: 4;
+    }
+
+    .hl-eyebrow {
+      color: var(--gold-soft);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      margin-bottom: 4px;
+    }
+
+    .hl-caption {
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.4;
+      letter-spacing: 0.1px;
+    }
+
+    .hl-counter {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+
+    .hl-arrow {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.4), transparent);
+      color: #fff;
+      font-size: 15px;
+      z-index: 6;
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    .hl-arrow.right {
+      right: 0;
+      left: auto;
+      background: linear-gradient(to left, rgba(0, 0, 0, 0.4), transparent);
+    }
+
+    .highlight-feature:hover .hl-arrow {
+      opacity: 1;
+    }
+
+    .hl-dots {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 6;
+      display: flex;
+      gap: 4px;
+    }
+
+    .hl-dot {
+      flex: 1;
+      height: 3px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.3);
+      transition: background var(--transition-fast);
+    }
+
+    .hl-dot.active {
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+    }
+
+    /* ============ ROWS ============ */
+    .rows {
+      padding: 32px 0 80px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .row {
+      margin-bottom: 48px;
+    }
+
+    .row-title {
+      font-size: 19px;
+      font-weight: 700;
+      padding: 0 40px 14px;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .row-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 20px;
+      background: var(--red);
+      border-radius: 2px;
+    }
+
+    .row-track {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px 40px 24px;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .row-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ============ MOVIE CARDS ============ */
+    .card {
+      flex: 0 0 auto;
+      width: clamp(135px, 20vw, 180px);
+      border-radius: var(--card-radius);
+      overflow: visible;
+      position: relative;
+      background: var(--surface);
+      transition: transform var(--transition-bounce), box-shadow var(--transition-smooth), z-index 0s;
+      cursor: pointer;
+      z-index: 1;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .card:hover,
+    .card.show-info {
+      transform: scale(1.2);
+      z-index: 20;
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 40px rgba(229, 9, 20, 0.12);
+    }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 9/16;
+      position: relative;
+      border-radius: var(--card-radius) var(--card-radius) 0 0;
+      overflow: hidden;
+    }
+
+    .card-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, transparent 35%);
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity var(--transition-smooth);
+    }
+
+    .card:hover .card-img::after,
+    .card.show-info .card-img::after {
+      opacity: 1;
+    }
+
+    .card-img .ph {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--card-radius) var(--card-radius) 0 0;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 5;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+      pointer-events: none;
+    }
+
+    .card:hover .card-badge,
+    .card.show-info .card-badge {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-info {
+      padding: 0 12px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--transition-smooth), padding var(--transition-smooth);
+      background: var(--surface);
+      border-radius: 0 0 var(--card-radius) var(--card-radius);
+    }
+
+    .card:hover .card-info,
+    .card.show-info .card-info {
+      max-height: 200px;
+      padding: 10px 12px 14px;
+    }
+
+    .card-info-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .play-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #fff;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .card:hover .play-dot,
+    .card.show-info .play-dot {
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
+    }
+
+    .match {
+      color: #46d369;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.2px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: 0.2px;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-tags {
+      font-size: 10px;
+      color: var(--muted-2);
+      font-weight: 500;
+    }
+
+    .card-tags span:not(:last-child)::after {
+      content: '•';
+      margin: 0 5px;
+      color: var(--muted-2);
+    }
+
+    /* Card entrance stagger */
+    .card {
+      animation: cardPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .card:nth-child(1) {
+      animation-delay: 0.05s;
+    }
+
+    .card:nth-child(2) {
+      animation-delay: 0.12s;
+    }
+
+    .card:nth-child(3) {
+      animation-delay: 0.19s;
+    }
+
+    .card:nth-child(4) {
+      animation-delay: 0.26s;
+    }
+
+    .card:nth-child(5) {
+      animation-delay: 0.33s;
+    }
+
+    .card:nth-child(6) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes cardPopIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ============ BIRTHDAY SPECIAL CARD ============ */
+    .bday-card {
+      margin: 0 40px 48px;
+      border-radius: 10px;
+      padding: 28px 32px;
+      background: linear-gradient(125deg, #1a0808 0%, #2a0c0c 30%, #1a1a1f 70%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      cursor: pointer;
+      border: 1px solid rgba(242, 177, 52, 0.3);
+      transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+      animation: bdayPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes bdayPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(242, 177, 52, 0);
+      }
+
+      50% {
+        box-shadow: 0 0 30px 8px rgba(242, 177, 52, 0.1);
+      }
+    }
+
+    .bday-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(242, 177, 52, 0.06), transparent 70%);
+      pointer-events: none;
+    }
+
+    .bday-card:hover {
+      transform: scale(1.015);
+      border-color: rgba(242, 177, 52, 0.6);
+      box-shadow: 0 0 40px 12px rgba(242, 177, 52, 0.15);
+    }
+
+    .bday-left {
+      position: relative;
+      z-index: 2;
+    }
+
+    .bday-left .bday-eyebrow {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .bday-left h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 1px;
+    }
+
+    .bday-left p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+      max-width: 420px;
+      line-height: 1.5;
+    }
+
+    .bday-btn {
+      background: var(--gold);
+      color: #141414;
+      font-weight: 800;
+      padding: 13px 26px;
+      border-radius: 6px;
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+      position: relative;
+      z-index: 2;
+      letter-spacing: 0.3px;
+    }
+
+    .bday-btn:hover {
+      background: var(--gold-soft);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(242, 177, 52, 0.4);
+    }
+
+    .bday-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* ============ KIDS SCREEN ============ */
+    #screen-kids {
+      background: linear-gradient(180deg, #14141c, #0a0a0c);
+    }
+
+    .kids-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 40px;
+    }
+
+    .kids-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: var(--gold);
+      letter-spacing: 1.5px;
+    }
+
+    .kids-hero {
+      text-align: center;
+      padding: 20px 20px 40px;
+    }
+
+    .kids-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(30px, 6vw, 52px);
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    .kids-hero p {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .kids-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 22px;
+      padding: 0 40px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .kid-card {
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 9/16;
+      max-width: 220px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+      border: 4px solid transparent;
+      transition: transform var(--transition-bounce), border-color var(--transition-fast), box-shadow var(--transition-smooth);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .kid-card:nth-child(5n+1) {
+      border-color: #f2b134;
+    }
+
+    .kid-card:nth-child(5n+2) {
+      border-color: #e5484d;
+    }
+
+    .kid-card:nth-child(5n+3) {
+      border-color: #4d9de0;
+    }
+
+    .kid-card:nth-child(5n+4) {
+      border-color: #7ed957;
+    }
+
+    .kid-card:nth-child(5n+5) {
+      border-color: #c77dff;
+    }
+
+    .kid-card:hover {
+      transform: translateY(-8px) rotate(-1.5deg);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .kid-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 14px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 3;
+      letter-spacing: 0.2px;
+    }
+
+    /* ============ BIRTHDAY MODAL ============ */
+    #bday-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    #bday-modal.active {
+      display: flex;
+    }
+
+    .bday-modal-box {
+      max-width: 620px;
+      width: 100%;
+      background: linear-gradient(160deg, #1a1010, #0c0c10 60%);
+      border: 1px solid rgba(242, 177, 52, 0.4);
+      border-radius: 12px;
+      padding: 48px 40px;
+      text-align: center;
+      position: relative;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .bday-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: none;
+      color: var(--muted);
+      font-size: 24px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .bday-modal-close:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .bday-modal-eyebrow {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .bday-modal-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(32px, 6vw, 48px);
+      margin-bottom: 24px;
+      line-height: 1.05;
+      letter-spacing: 1.5px;
+    }
+
+    .bday-modal-text {
+      color: #e4e4e4;
+      font-size: 15.5px;
+      line-height: 1.9;
+      text-align: left;
+    }
+
+    .bday-modal-text p {
+      margin-bottom: 16px;
+    }
+
+    .bday-sign {
+      margin-top: 24px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--gold);
+      text-align: right;
+      letter-spacing: 1px;
+    }
+
+    /* ============ CONFETTI ============ */
+    .confetti-piece {
+      position: fixed;
+      top: -12px;
+      z-index: 250;
+      border-radius: 2px;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    /* ============ TOUCH DEVICE OVERRIDES ============ */
+    @media (hover: none) {
+      .hl-arrow {
+        opacity: 0.5;
+      }
+
+      .card:hover {
+        transform: none;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      .card:hover .card-info {
+        max-height: 0;
+        padding: 0 12px;
+      }
+
+      .card:hover .card-img::after {
+        opacity: 0;
+      }
+
+      .card:hover .card-badge {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1024px) {
+      .topnav {
+        padding: 14px 24px;
+      }
+
+      .hero {
+        padding: 110px 24px 50px;
+      }
+
+      .hero-inner {
+        gap: 32px;
+      }
+
+      .row-title {
+        padding: 0 24px 14px;
+        font-size: 17px;
+      }
+
+      .row-track {
+        padding: 10px 24px 24px;
+        gap: 8px;
+      }
+
+      .bday-card {
+        margin: 0 24px 44px;
+        padding: 22px 24px;
+      }
+
+      .card {
+        width: clamp(125px, 22vw, 165px);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .hero-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .hero-btns {
+        justify-content: center;
+      }
+
+      .highlight-feature {
+        width: min(220px, 55vw);
+        max-height: 340px;
+      }
+
+      .topnav-links {
+        gap: 14px;
+        font-size: 12.5px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topnav {
+        padding: 12px 16px;
+      }
+
+      .topnav-links {
+        display: none;
+      }
+
+      .logo {
+        font-size: 24px;
+      }
+
+      .hero {
+        padding: 96px 16px 40px;
+      }
+
+      .hero-inner {
+        gap: 26px;
+      }
+
+      .hero-title {
+        font-size: clamp(32px, 10vw, 46px);
+      }
+
+      .hero-desc {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        padding: 10px 18px;
+        font-size: 13.5px;
+      }
+
+      .hero-btns {
+        gap: 10px;
+        width: 100%;
+      }
+
+      .hero-btns .btn {
+        flex: 1 1 auto;
+        justify-content: center;
+      }
+
+      .highlight-feature {
+        width: min(200px, 58vw);
+        max-height: 310px;
+      }
+
+      .rows {
+        padding: 24px 0 60px;
+      }
+
+      .row-title {
+        padding: 0 16px 10px;
+        font-size: 15px;
+      }
+
+      .row-track {
+        padding: 8px 16px 18px;
+        gap: 8px;
+      }
+
+      .card {
+        width: clamp(100px, 30vw, 140px);
+      }
+
+      .card:hover,
+      .card.show-info {
+        transform: scale(1.1);
+      }
+
+      .bday-card {
+        margin: 0 16px 36px;
+        padding: 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .bday-left h3 {
+        font-size: 24px;
+      }
+
+      .bday-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .kids-grid {
+        padding: 0 16px 50px;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      }
+
+      .kids-nav {
+        padding: 14px 16px;
+      }
+
+      .kids-hero {
+        padding: 16px 16px 28px;
+      }
+
+      .profile-avatar {
+        width: 100px;
+        height: 100px;
+      }
+
+      .profile-card {
+        width: 110px;
+      }
+
+      .profiles-row {
+        gap: 18px;
+      }
+
+      .profiles-wrap h1 {
+        margin-bottom: 36px;
+      }
+
+      .bday-modal-box {
+        padding: 30px 18px;
+      }
+
+      .bday-modal-title {
+        font-size: clamp(26px, 8vw, 36px);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .card {
+        width: clamp(88px, 38vw, 120px);
+      }
+
+      .highlight-feature {
+        width: min(170px, 60vw);
+        max-height: 280px;
+      }
+
+      .profile-avatar {
+        width: 84px;
+        height: 84px;
+      }
+
+      .profile-card {
+        width: 92px;
+        gap: 10px;
+      }
+
+      .profile-name {
+        font-size: 13px;
+      }
+
+      .hero {
+        padding: 88px 10px 32px;
+      }
+
+      .row-track {
+        padding: 6px 10px 16px;
+      }
+
+      .bday-card {
+        margin: 0 10px 28px;
+      }
+
+      .kids-grid {
+        padding: 0 10px 40px;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= CONFIG START ================= -->
+  <script>
+    const AAROHI_PASSWORD = "iloveaditya";
+
+    const highlights = [
+      { src: "../images/1.jpeg", caption: "Somewhere in 2021, this all began" },
+      { src: "../images/2.jpeg", caption: "Random Tuesday, 1 AM, no topic in particular" },
+      { src: "../images/3.jpeg", caption: "Still laughing about something we already forgot" },
+      { src: "../images/4.jpeg", caption: "The call that was supposed to be '5 minutes'" },
+      { src: "../images/5.jpeg", caption: "Mid-sentence, as always" },
+      { src: "../images/6.jpeg", caption: "A screenshot she definitely did not approve" },
+      { src: "../images/7.jpeg", caption: "The 100th 'wait, can you hear me?'" },
+      { src: "../images/8.jpeg", caption: "Present day. Still going strong." },
+      { src: "../images/9.jpeg", caption: "That face when the wifi lags mid-story" },
+      { src: "../images/10.jpeg", caption: "To be continued — always" }
+    ];
+
+    const movies = [
+      {
+        img: "../images/11.jpeg", title: "Est. 2021", match: "100% Match", meta: ["Origin Story",
+          "Ongoing"
+        ], desc: "The one where two strangers become the kind of friends who just get it, instantly, and never look back.",
+        badge: "ORIGIN"
+      },
+      {
+        img: "../images/12.jpeg", title: "Always On Call", match: "99% Match", meta: ["Drama",
+          "Every Timezone"
+        ], desc: "No matter the hour, the mood, or the mess — one ring and she's there. Every single time, no exceptions.",
+        badge: "FAN FAV"
+      },
+      {
+        img: "../images/13.jpeg", title: "3AM: The Series", match: "97% Match", meta: ["Comedy",
+          "Never Cancelled"
+        ], desc: "Late-night calls, terrible ideas, worse jokes. The longest-running show that somehow never gets old.",
+        badge: "LONG RUN"
+      },
+      {
+        img: "../images/14.jpeg", title: "Unfiltered & Unbothered", match: "98% Match", meta: ["Comedy",
+          "No Script"
+        ], desc: "No filters, no script, no self-consciousness — just two people being ridiculous on camera and loving it.",
+        badge: "RAW CUT"
+      },
+      {
+        img: "../images/15.jpeg", title: "The Constant", match: "100% Match", meta: ["Drama",
+          "Since 2021"
+        ], desc: "Seasons change, life gets loud, plans fall apart — she's the one character who never, ever leaves the plot.",
+        badge: "ESSENTIAL"
+      },
+      {
+        img: "../images/16.jpeg", title: "Chaos, Co-Starring You", match: "96% Match", meta: ["Slice of Life",
+          "Ongoing"
+        ], desc: "Every random adventure, every dumb plan, every 'let's just do it' — she's in the frame for all of it.",
+        badge: "NEW"
+      }
+    ];
+
+    const kidPhotos = [
+      { src: "../images/17.jpeg", caption: "Exhibit A: pure chaos energy" },
+      { src: "../images/18.jpeg", caption: "Before she learned to pose" },
+      { src: "../images/19.jpeg", caption: "The original main character" },
+      { src: "../images/20.jpeg", caption: "Still iconic" }
+    ];
+
+    const birthdayMessage = [
+      "Since 2021, you've been the one constant through every version of my life, the 3 AM calls about absolutely nothing and everything at once.",
+      "I don't think I've ever had to ask if you'd show up. You just always have. That's rare, and I don't say it enough.",
+      "Here's to more random video calls, more terrible jokes, more screenshots you never agreed to, and many, many more years of you being the most consistent, caring, chaotic good person I know.",
+      "Happy Birthday, Aarohi. Season 5 of us starts now."
+    ];
+  </script>
+  <!-- ================= CONFIG END ================= -->
+
+  <!-- ================= PROFILE SELECT SCREEN ================= -->
+  <div class="screen active" id="screen-profiles">
+    <div class="profiles-wrap">
+      <div class="logo" style="font-size:28px; margin-bottom:34px;">AAROHI<span>FLIX</span></div>
+      <h1>Who's watching?</h1>
+      <div class="profiles-row">
+        <button class="profile-card" onclick="goTo('screen-password')">
+          <div class="profile-avatar">
+            <div class="ph"><img src="../images/11.jpeg" onerror="this.style.display='none'"
+                onload="this.parentElement.classList.add('loaded')"><span
+                class="ph-label"><b>AAROHI</b>profile-aarohi.jpg</span></div>
+          </div>
+          <span class="profile-name">Aarohi</span>
+        </button>
+        <button class="profile-card" onclick="goTo('screen-kids')">
+          <div class="profile-avatar kids">
+            <div class="ph"><img src="../images/17.jpeg" onerror="this.style.display='none'"
+                onload="this.parentElement.classList.add('loaded')"><span
+                class="ph-label"><b>KIDS</b>profile-kids.jpg</span></div>
+          </div>
+          <span class="profile-name">Kids <span class="kids-tag">KIDS</span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PASSWORD SCREEN ================= -->
+  <div class="screen" id="screen-password">
+    <div class="pw-box">
+      <div class="pw-avatar">
+        <div class="ph"><img src="../images/11.jpeg" onerror="this.style.display='none'"
+            onload="this.parentElement.classList.add('loaded')"><span class="ph-label">AAROHI</span></div>
+      </div>
+      <h2>Enter your password</h2>
+      <input type="password" class="pw-input" id="pw-input" placeholder="Password"
+        onkeydown="if(event.key==='Enter')checkPassword()">
+      <button class="pw-submit" onclick="checkPassword()">Log In</button>
+      <div class="pw-error" id="pw-error"></div>
+      <a class="pw-back" onclick="goTo('screen-profiles')">&larr; Back to profiles</a>
+    </div>
+  </div>
+
+  <!-- ================= BROWSE SCREEN ================= -->
+  <div class="screen" id="screen-browse">
+    <div class="topnav" id="topnav">
+      <div class="topnav-left">
+        <div class="logo">AAROHI<span>FLIX</span></div>
+        <div class="topnav-links">
+          <a href="#">Home</a>
+          <a href="#row-movies">Movies About You</a>
+        </div>
+      </div>
+      <div class="topnav-right">
+        <a class="exit-link" onclick="goTo('screen-profiles')">Switch Profile</a>
+        <div class="nav-avatar">
+          <div class="ph"><img src="../images/11.jpeg" onerror="this.style.display='none'"
+              onload="this.parentElement.classList.add('loaded')"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-eyebrow">AAROHIFLIX ORIGINAL</div>
+          <div class="hero-title display">OUR STORY</div>
+          <div class="hero-desc">A friendship series running since 2021 starring one person who never misses a call,
+            and me, still grateful about it. New episode drops every time we talk.</div>
+          <div class="hero-btns">
+            <button class="btn btn-play" onclick="hlMove(1)">&#9654; Play Highlights</button>
+            <button class="btn btn-info" onclick="openBdayModal()">&#8505; More Info</button>
+          </div>
+        </div>
+
+        <div class="hero-highlight">
+          <div class="hero-highlight-label">How We Grew Up</div>
+          <div class="highlight-feature" id="hl-feature">
+            <div class="hl-dots" id="hl-dots"></div>
+            <button class="hl-arrow" onclick="hlMove(-1)" aria-label="Previous">&#10094;</button>
+            <button class="hl-arrow right" onclick="hlMove(1)" aria-label="Next">&#10095;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rows">
+      <div class="bday-card" onclick="openBdayModal()">
+        <div class="bday-left">
+          <div class="bday-eyebrow">NEW &middot; SPECIAL EPISODE</div>
+          <h3 class="display">A Message For You</h3>
+          <p>One episode you haven't seen yet. Releases August 3rd. Tap to watch now.</p>
+        </div>
+        <div class="bday-btn">&#9654; Watch Now</div>
+      </div>
+
+      <div class="row" id="row-movies">
+        <div class="row-title">Movies Based on Aarohi</div>
+        <div class="row-track" id="movie-track"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= KIDS SCREEN ================= -->
+  <div class="screen" id="screen-kids">
+    <div class="kids-nav">
+      <div class="kids-logo display">AAROHIFLIX KIDS</div>
+      <a class="exit-link" onclick="goTo('screen-profiles')">Switch Profile</a>
+    </div>
+    <div class="kids-hero">
+      <h1 class="display">Baby Aarohi Cinematic Universe</h1>
+      <p>Now streaming: the earliest known footage.</p>
+    </div>
+    <div class="kids-grid" id="kids-grid"></div>
+  </div>
+
+  <!-- ================= BIRTHDAY MODAL ================= -->
+  <div id="bday-modal">
+    <div class="bday-modal-box">
+      <button class="bday-modal-close" onclick="closeBdayModal()">&times;</button>
+      <div class="bday-modal-eyebrow">AAROHIFLIX SPECIAL &middot; AUGUST 3</div>
+      <div class="bday-modal-title display">Happy Birthday, Aarohi</div>
+      <div class="bday-modal-text" id="bday-text"></div>
+    </div>
+  </div>
+
+  <script>
+    // ============ SCREEN NAVIGATION ============
+    function goTo(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(id);
+      target.classList.add('active');
+      if (id === 'screen-password') {
+        document.getElementById('pw-input').value = '';
+        document.getElementById('pw-error').textContent = '';
+        setTimeout(() => document.getElementById('pw-input').focus(), 100);
+      }
+      if (id === 'screen-browse') {
+        target.scrollTop = 0;
+        initNavScroll();
+      }
+    }
+
+    function checkPassword() {
+      const val = document.getElementById('pw-input').value;
+      if (val === AAROHI_PASSWORD) {
+        goTo('screen-browse');
+      } else {
+        document.getElementById('pw-error').textContent = "That's not it — try again.";
+        document.getElementById('pw-input').classList.add('shake');
+        setTimeout(() => document.getElementById('pw-input').classList.remove('shake'), 400);
+      }
+    }
+
+    // ============ TOP NAV SCROLL EFFECT ============
+    function initNavScroll() {
+      const browseScreen = document.getElementById('screen-browse');
+      const topnav = document.getElementById('topnav');
+      const updateNav = () => {
+        if (browseScreen.scrollTop > 40) {
+          topnav.classList.add('scrolled');
+        } else {
+          topnav.classList.remove('scrolled');
+        }
+      };
+      browseScreen.addEventListener('scroll', updateNav, { passive: true });
+      updateNav();
+    }
+
+    // ============ BUILD MOVIE ROW ============
+    const track = document.getElementById('movie-track');
+    movies.forEach((m, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+            <div class="card-badge">${m.badge || ''}</div>
+            <div class="card-img">
+              <div class="ph"><img src="${m.img}" onerror="this.style.display='none'" onload="this.parentElement.classList.add('loaded')" loading="lazy"><span class="ph-label">${m.img.split('/').pop()}</span></div>
+            </div>
+            <div class="card-info">
+              <div class="card-info-top">
+                <div class="play-dot">&#9654;</div>
+                <div class="match">${m.match}</div>
+              </div>
+              <div class="card-title">${m.title}</div>
+              <div class="card-desc">${m.desc}</div>
+              <div class="card-tags">${m.meta.map(t => `<span>${t}</span>`).join('')}</div>
+            </div>`;
+      card.addEventListener('click', (e) => {
+        if (window.matchMedia('(hover: none)').matches) {
+          e.stopPropagation();
+          const wasOpen = card.classList.contains('show-info');
+          document.querySelectorAll('.card.show-info').forEach(c => c.classList.remove(
+            'show-info'));
+          if (!wasOpen) card.classList.add('show-info');
+        }
+      });
+      track.appendChild(card);
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.card')) {
+        document.querySelectorAll('.card.show-info').forEach(c => c.classList.remove('show-info'));
+      }
+    });
+
+    // ============ BUILD HIGHLIGHT SLIDESHOW ============
+    const hlFeature = document.getElementById('hl-feature');
+    const hlDots = document.getElementById('hl-dots');
+    let hlIndex = 0;
+    let hlTimer;
+
+    highlights.forEach((h, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'hl-slide' + (i === 0 ? ' active' : '');
+      slide.innerHTML = `
+            <div class="ph" style="position:absolute;inset:0;">
+              <img src="${h.src}" onerror="this.style.display='none'" onload="this.parentElement.classList.add('loaded')" loading="lazy">
+              <span class="ph-label"><b>Highlight ${i + 1}</b>${h.src.split('/').pop()}</span>
+            </div>
+            <div class="hl-slide-overlay">
+              <div class="hl-eyebrow">MEMORY ${String(i + 1).padStart(2, '0')} OF ${String(highlights.length).padStart(2, '0')}</div>
+              <div class="hl-caption">${h.caption}</div>
+              <div class="hl-counter">Autoplaying</div>
+            </div>`;
+      hlFeature.insertBefore(slide, document.getElementById('hl-dots'));
+
+      const dot = document.createElement('div');
+      dot.className = 'hl-dot' + (i === 0 ? ' active' : '');
+      hlDots.appendChild(dot);
+    });
+
+    function hlShow(i) {
+      const slides = hlFeature.querySelectorAll('.hl-slide');
+      const dots = hlDots.querySelectorAll('.hl-dot');
+      slides[hlIndex].classList.remove('active');
+      dots[hlIndex].classList.remove('active');
+      hlIndex = (i + highlights.length) % highlights.length;
+      slides[hlIndex].classList.add('active');
+      dots[hlIndex].classList.add('active');
+    }
+
+    function hlMove(dir) {
+      hlShow(hlIndex + dir);
+      resetHlTimer();
+    }
+
+    function resetHlTimer() {
+      clearInterval(hlTimer);
+      hlTimer = setInterval(() => hlShow(hlIndex + 1), 3200);
+    }
+    hlFeature.addEventListener('mouseenter', () => clearInterval(hlTimer));
+    hlFeature.addEventListener('mouseleave', resetHlTimer);
+    resetHlTimer();
+
+    // ============ BUILD KIDS GRID ============
+    const kidsGrid = document.getElementById('kids-grid');
+    kidPhotos.forEach((k, i) => {
+      const card = document.createElement('div');
+      card.className = 'kid-card';
+      card.innerHTML = `
+            <div class="ph" style="position:absolute;inset:0;">
+              <img src="${k.src}" onerror="this.style.display='none'" onload="this.parentElement.classList.add('loaded')" loading="lazy">
+              <span class="ph-label">${k.src.split('/').pop()}</span>
+            </div>
+            <div class="kid-caption">${k.caption}</div>`;
+      kidsGrid.appendChild(card);
+    });
+
+    // ============ BIRTHDAY MODAL ============
+    const bdayText = document.getElementById('bday-text');
+    birthdayMessage.forEach(p => {
+      const el = document.createElement('p');
+      el.textContent = p;
+      bdayText.appendChild(el);
+    });
+    const sign = document.createElement('div');
+    sign.className = 'bday-sign';
+    sign.textContent = '— Aditya!!';
+    bdayText.appendChild(sign);
+
+    function openBdayModal() {
+      document.getElementById('bday-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      launchConfetti();
+    }
+
+    function closeBdayModal() {
+      document.getElementById('bday-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('bday-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'bday-modal') closeBdayModal();
+    });
+
+    // ============ ENHANCED CONFETTI ============
+    function launchConfetti() {
+      const colors = ['#e50914', '#f2b134', '#ffffff', '#e5484d', '#f5c85a', '#ff6b6b', '#ffd93d',
+        '#ff8a80'];
+      const shapes = ['square', 'circle'];
+      for (let i = 0; i < 80; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        const size = 5 + Math.random() * 8;
+        piece.style.width = size + 'px';
+        piece.style.height = (shapes[Math.floor(Math.random() * 2)] === 'circle' ? size : size * 0.5) +
+          'px';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = shapes[Math.floor(Math.random() * 2)] === 'circle' ? '50%' : '2px';
+        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+        document.body.appendChild(piece);
+        const duration = 2400 + Math.random() * 2000;
+        const drift = (Math.random() - 0.5) * 300;
+        const wobble = (Math.random() - 0.5) * 180;
+        piece.animate([
+          {
+            transform: piece.style.transform +
+              ' translate(0,0) rotate(0deg)', opacity: 1
+          },
+          {
+            transform: `rotate(${wobble}deg) translate(${drift}px, 105vh) rotate(${Math.random() * 540}deg)`,
+            opacity: 0.7
+          }
+        ], { duration, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' });
+        setTimeout(() => piece.remove(), duration + 100);
+      }
+    }
+
+    // ============ INIT NAV SCROLL ON BROWSE ============
+    if (document.getElementById('screen-browse').classList.contains('active')) {
+      initNavScroll();
+    }
+
+    // ============ KEYBOARD SHORTCUT: ESC TO CLOSE MODAL ============
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('bday-modal').classList.contains('active')) {
+        closeBdayModal();
+      }
+    });
+  </script>
+
+</body>
+
+</html>
